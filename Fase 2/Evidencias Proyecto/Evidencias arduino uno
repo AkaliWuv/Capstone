@@ -1,118 +1,58 @@
-//Incluye las librerías
-# include "HX711.h"
-# include <Wire.h>
-# include <LiquidCrystal_I2C.h>
-# include <EEPROM.h>
-
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+#include "HX711.h"
 
 HX711 balanza;
-
-const int zero = 2;
-int DT = 4;
-int CLK = 5;
-
-int peso_calibracion = 185; // Es el peso referencial a poner
-long escala;
-
-int state_zero = 0;
-int last_state_zero = 0;
-
-//Función calibración
-void calibration() { // despues de hacer la calibracion puedes borrar toda la funcion "void calibration()"
-  boolean conf = true;
-  long adc_lecture;
-
-  // restamos el peso de la base de la balaza
-  lcd.setCursor(0, 0);
-  lcd.print("Calibrando base");
-  lcd.setCursor(4, 1);
-  lcd.print("Balanza");
-  delay(3000);
-  balanza.read();
-  balanza.set_scale(); //La escala por defecto es 1
-  balanza.tare(20);  //El peso actual es considerado zero.
-  lcd.clear();
-
-  //Iniciando calibración
-  while (conf == true) {
-
-    lcd.setCursor(1, 0);
-    lcd.print("Peso referencial:");
-    lcd.setCursor(1, 1);
-    lcd.print(peso_calibracion);
-    lcd.print(" g        ");
-    delay(3000);
-    lcd.clear();
-    lcd.setCursor(1, 0);
-    lcd.print("Ponga el Peso");
-    lcd.setCursor(1, 1);
-    lcd.print("Referencial");
-    delay(3000);
-
-    //Lee el valor del HX711
-    adc_lecture = balanza.get_value(100);
-
-    //Calcula la escala con el valor leido dividiendo el peso conocido
-    escala = adc_lecture / peso_calibracion;
-
-    //Guarda la escala en la EEPROM
-    EEPROM.put( 0, escala );
-    delay(100);
-    lcd.setCursor(1, 0);
-    lcd.print("Retire el Peso");
-    lcd.setCursor(1, 1);
-    lcd.print("referencial");
-    delay(3000);
-    lcd.clear();
-    lcd.setCursor(1, 0);
-    lcd.print("READY!!....");
-    delay(3000);
-    lcd.clear();
-    conf = false; //para salir de while
-    lcd.clear();
-
-  }
-}
+int DT = 4;  // Pin de datos del HX711
+int CLK = 5; // Pin de reloj del HX711
+float peso = 0;
+float escala = 1.0; // Comienza con una escala de 1.0
 
 void setup() {
-  balanza.begin(DT, CLK);//asigana los pines para el recibir el trama del pulsos que viene del modulo
-  pinMode(zero, INPUT);//declaramos el pin2 como entrada del pulsador
-  pinMode(13,OUTPUT);
+  Serial.begin(9600);    // Inicia la comunicación serial a 9600 baudios
+  balanza.begin(DT, CLK); // Configura los pines del HX711
+  
+  Serial.println("Coloca un peso conocido en la balanza para calibrar...");
+  delay(5000);  // Espera 5 segundos para que coloques un peso conocido
+  
+  long lectura_bruta = balanza.get_units(10);  // Lee el valor bruto del HX711
+  
+  Serial.print("Lectura bruta: ");
+  Serial.println(lectura_bruta);
+  
+  // Cambia esto por el peso real que estás usando para calibrar
+  float peso_conocido = 100.0; // Ejemplo: 100 g
 
-  EEPROM.get( 0, escala );//Lee el valor de la escala en la EEPROM
+  // Calcula la escala con base en el peso conocido
+  escala = lectura_bruta / peso_conocido;
+  
+  balanza.set_scale(escala);    // Ajusta la escala del sensor
+  balanza.tare();               // Ajusta el peso actual como cero
 
-  if (digitalRead(zero) == 1) { //esta accion solo sirve la primera vez para calibrar la balanza, es decir se presionar ni bien se enciende el sistema
-    calibration();
-  }
-  balanza.set_scale(escala); // Establecemos la escala
-  balanza.tare(20);  //El peso actual de la base es considerado zero.
-
+  Serial.print("Escala calculada: ");
+  Serial.println(escala);
 }
 
 void loop() {
+  peso = balanza.get_units(10);  // Obtiene el peso medido con la escala calculada
 
-  int state_zero = digitalRead(zero);
-  float peso;
-  peso = balanza.get_units(10);  //Mide el peso de la balanza
+  if (peso < 0) {
+      peso = 0; // Ajusta a cero si el peso es negativo
+  }
 
-  //Muestra el peso
-  lcd.setCursor(1, 0);
-  lcd.print("Peso: ");
-  lcd.print(peso, 0);
-  lcd.println(" g        ");
-  delay(5);
+  Serial.print("Peso: ");
+  Serial.print(peso);
+  Serial.println(" g");
 
-  //Botón de zero, esto sirve para restar el peso de un recipiente
-  if ( state_zero != last_state_zero) {
-
-    if (state_zero == LOW) {
-      balanza.tare(10);  //El peso actual es considerado zero.
-    }
-  }
-  last_state_zero  = state_zero;
-
-  if (peso>=500)digitalWrite(13,1);
-  else if(peso<=500)digitalWrite(13,0);
-
+  // Pregunta si se quiere hacer otra lectura
+  Serial.println("¿Deseas hacer otra lectura? (s/n)");
+  while (true) {
+    if (Serial.available()) {
+      char respuesta = Serial.read();  // Lee la respuesta del usuario
+      if (respuesta == 's' || respuesta == 'S') {
+        break; // Sale del bucle para repetir la lectura
+      } else if (respuesta == 'n' || respuesta == 'N') {
+        Serial.println("Lectura detenida.");
+        while (true); // Detiene el bucle si la respuesta es no
+      }
+    }
+  }
 }
