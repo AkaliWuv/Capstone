@@ -1,10 +1,20 @@
+#include <ESP8266WiFi.h>
 #include "HX711.h"
 
 HX711 balanza;
-int DT = 4;  // Pin de datos del HX711
-int CLK = 5; // Pin de reloj del HX711
+const int DT = 4;  // Pin de datos del HX711
+const int CLK = 5; // Pin de reloj del HX711
 float peso = 0;
 float escala = 1.0; // Comienza con una escala de 1.0
+
+// Reemplaza con tus credenciales Wi-Fi
+const char* ssid = "Androidli";      // SSID de tu red Wi-Fi
+const char* password = "lilita74"; // Contraseña de tu red Wi-Fi
+
+WiFiServer server(80); // Configura el servidor en el puerto 80
+
+unsigned long previousMillis = 0; // Almacena el último tiempo actualizado
+const long interval = 10000; // Intervalo de tiempo en milisegundos (10 segundos)
 
 void setup() {
   Serial.begin(9600);    // Inicia la comunicación serial a 9600 baudios
@@ -14,7 +24,6 @@ void setup() {
   delay(5000);  // Espera 5 segundos para que coloques un peso conocido
   
   long lectura_bruta = balanza.get_units(10);  // Lee el valor bruto del HX711
-  
   Serial.print("Lectura bruta: ");
   Serial.println(lectura_bruta);
   
@@ -29,30 +38,63 @@ void setup() {
 
   Serial.print("Escala calculada: ");
   Serial.println(escala);
+  
+  // Conectar a Wi-Fi
+  WiFi.begin(ssid, password); // Intentar conectar a la red
+  Serial.println("Conectando a Wi-Fi...");
+
+  // Esperar hasta que el ESP8266 esté conectado
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  
+  Serial.println();
+  Serial.println("Conectado a la red Wi-Fi");
+  Serial.print("Dirección IP: ");
+  Serial.println(WiFi.localIP()); // Imprimir dirección IP
+  
+  server.begin(); // Iniciar el servidor
 }
 
 void loop() {
-  peso = balanza.get_units(10);  // Obtiene el peso medido con la escala calculada
+  // Obtener el tiempo actual
+  unsigned long currentMillis = millis();
+  
+  // Comprobar si es hora de actualizar el peso
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis; // Reiniciar el temporizador
 
-  if (peso < 0) {
+    // Actualizar el peso cada 10 segundos
+    peso = balanza.get_units(10); // Obtiene el peso medido con la escala calculada
+    if (peso < 0) {
       peso = 0; // Ajusta a cero si el peso es negativo
+    }
+    
+    Serial.print("Peso actualizado: ");
+    Serial.print(peso);
+    Serial.println(" g");
   }
 
-  Serial.print("Peso: ");
-  Serial.print(peso);
-  Serial.println(" g");
+  // Escuchar clientes entrantes
+  WiFiClient client = server.available();
+  if (client) {
+    // Leer la solicitud del cliente
+    String request = client.readStringUntil('\r');
+    client.flush();
 
-  // Pregunta si se quiere hacer otra lectura
-  Serial.println("¿Deseas hacer otra lectura? (s/n)");
-  while (true) {
-    if (Serial.available()) {
-      char respuesta = Serial.read();  // Lee la respuesta del usuario
-      if (respuesta == 's' || respuesta == 'S') {
-        break; // Sale del bucle para repetir la lectura
-      } else if (respuesta == 'n' || respuesta == 'N') {
-        Serial.println("Lectura detenida.");
-        while (true); // Detiene el bucle si la respuesta es no
-      }
-    }
+    // Generar una respuesta en formato JSON
+    String jsonResponse = "HTTP/1.1 200 OK\r\n";
+    jsonResponse += "Content-Type: application/json\r\n";
+    jsonResponse += "Connection: close\r\n\r\n"; // Cerrar conexión después de la respuesta
+    jsonResponse += "{\n";
+    jsonResponse += "\"peso\": " + String(peso) + ",\n";
+    jsonResponse += "\"unidad\": \"g\"\n";
+    jsonResponse += "}\n";
+
+    // Enviar la respuesta al cliente
+    client.print(jsonResponse);
+    delay(1);
+    client.stop(); // Detener el cliente
   }
 }
