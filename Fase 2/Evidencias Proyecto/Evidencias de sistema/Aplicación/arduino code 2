@@ -1,0 +1,88 @@
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include "HX711.h"
+
+HX711 balanza;
+const int DT = 4;  // Pin de datos del HX711
+const int CLK = 5; // Pin de reloj del HX711
+float peso = 0;
+float escala = 1.0; // Comienza con una escala de 1.0
+
+// Reemplaza con tus credenciales Wi-Fi
+const char* ssid = "Androidli";      // SSID de tu red Wi-Fi
+const char* password = "lilita74";    // Contraseña de tu red Wi-Fi
+
+// URL de la API a la que se enviará el peso
+const String apiUrl = "http://your-api-url.com/endpoint";  // Cambia esto por la URL de tu API
+
+void setup() {
+  Serial.begin(9600);
+  balanza.begin(DT, CLK);
+  
+  Serial.println("Coloca un peso conocido en la balanza para calibrar...");
+  delay(5000);
+  
+  long lectura_bruta = balanza.get_units(10);
+  Serial.print("Lectura bruta: ");
+  Serial.println(lectura_bruta);
+  
+  // Cambia esto por el peso conocido para calibrar
+  float peso_conocido = 100.0;
+
+  escala = lectura_bruta / peso_conocido;
+  balanza.set_scale(escala);
+  balanza.tare();
+  Serial.print("Escala calculada: ");
+  Serial.println(escala);
+
+  // Conectar a Wi-Fi
+  WiFi.begin(ssid, password);
+  Serial.println("Conectando a Wi-Fi...");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println();
+  Serial.println("Conectado a la red Wi-Fi");
+  Serial.print("Dirección IP: ");
+  Serial.println(WiFi.localIP());
+}
+
+void loop() {
+  peso = balanza.get_units(10);
+  if (peso < 0) {
+    peso = 0;
+  }
+
+  Serial.print("Peso actualizado: ");
+  Serial.print(peso);
+  Serial.println(" g");
+
+  // Enviar datos a la API si Wi-Fi está conectado
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(apiUrl); // URL de la API
+    http.addHeader("Content-Type", "application/json");  // Tipo de contenido JSON
+
+    // Crear el JSON con el peso
+    String jsonPayload = "{ \"peso\": " + String(peso) + ", \"unidad\": \"g\" }";
+    int httpResponseCode = http.POST(jsonPayload);  // Enviar datos a la API
+
+    // Verificar la respuesta del servidor
+    if (httpResponseCode > 0) {
+      Serial.print("Código de respuesta HTTP: ");
+      Serial.println(httpResponseCode);
+      Serial.print("Respuesta del servidor: ");
+      Serial.println(http.getString());
+    } else {
+      Serial.print("Error en la solicitud HTTP: ");
+      Serial.println(http.errorToString(httpResponseCode));
+    }
+    http.end();  // Finalizar la conexión
+  } else {
+    Serial.println("No conectado a Wi-Fi. Intentando reconectar...");
+    WiFi.reconnect();
+  }
+
+  delay(10000); // Espera 10 segundos antes de la siguiente lectura
+}
