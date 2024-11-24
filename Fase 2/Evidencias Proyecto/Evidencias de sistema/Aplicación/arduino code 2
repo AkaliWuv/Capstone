@@ -1,62 +1,102 @@
 #include <ESP8266WiFi.h>
-#include <HX711.h>
-#include <ESP8266WebServer.h>
+#include <time.h>
+#include "HX711.h"
+#include <ArduinoJson.h>
 
-// Definir los pines donde se conecta el HX711
-#define LOADCELL_DOUT_PIN  D4
-#define LOADCELL_SCK_PIN   D5
+HX711 balanza;
+const int DT = 4;
+const int CLK = 5;
+float peso = 0;
+float escala = 1.0;
 
-// Definir las credenciales WiFi
-const char* ssid = "tzuyu";     // Tu red WiFi
-const char* password = "12345677";    // Tu contraseña WiFi
+const char* ssid = "tzuyu";
+const char* password = "12345677";
 
-HX711 scale;
+WiFiServer server(8080);
 
-// Crear un objeto servidor en el puerto 80
-ESP8266WebServer server(80);
+unsigned long previousMillis = 0;
+const long interval = 10000; // Intervalo de prueba de 10 segundos
 
 void setup() {
-  // Inicializa la comunicación serial
-  Serial.begin(115200);
-  delay(10);
-
-  // Conecta la ESP8266 a la red WiFi
-  WiFi.begin(ssid, password);
-  
-  // Espera hasta que se conecte al WiFi
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  
-  // Muestra la dirección IP de la ESP8266 en el monitor serial
-  Serial.println("Conectado al WiFi");
-  Serial.print("IP: ");
-  Serial.println(WiFi.localIP());
-
-  // Inicializa el sensor de peso HX711
-  scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
-  scale.set_scale(); // Establece una escala de calibración predeterminada
-  scale.tare(); // Pone a cero el valor de la báscula
-
-  // Configura el servidor para manejar solicitudes HTTP en la raíz
-  server.on("/", HTTP_GET, handleWeight);  // Maneja la solicitud en la raíz "/"
-  
-  // Inicia el servidor web
-  server.begin();
+    Serial.begin(9600);
+    balanza.begin(DT, CLK);
+    
+    Serial.println("Calibrando...");
+    delay(5000);
+    
+    long lectura_bruta = balanza.get_units(10);
+    float peso_conocido = 100.0;
+    escala = lectura_bruta / peso_conocido;
+    balanza.set_scale(escala);
+    balanza.tare();
+    
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+    
+    Serial.println("Conectado a Wi-Fi");
+    Serial.print("Dirección IP: ");
+    Serial.println(WiFi.localIP());
+    
+    // Configuración de NTP
+    configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+    while (time(nullptr) < 8 * 3600 * 2) {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println("Tiempo sincronizado");
+    
+    server.begin();
 }
 
 void loop() {
-  // Maneja las solicitudes del cliente
-  server.handleClient();
+    WiFiClient client = server.available();
+    if (client) {
+        String request = client.readStringUntil('\r');
+        client.flush();
+        
+        unsigned long currentMillis = millis();
+        if (currentMillis - previousMillis >= interval) {
+            previousMillis = currentMillis;
+            int hour = hourFormat();
+            
+            if (hour == 9 || hour == 18) {
+                peso = balanza.get_units(10);
+                if (peso < 0) {
+                    peso = 0;
+                }
+                
+                Serial.print("Peso actualizado: ");
+                Serial.print(peso);
+                Serial.println(" g");
+            }
+        }
+        
+        // Crear el objeto JSON
+        StaticJsonDocument<200> doc;
+        doc["peso"] = peso;
+        doc["hora"] = hourFormat();  // Incluye la hora para saber cuándo se obtuvo el peso
+
+        // Serializar el objeto JSON a una cadena
+        String jsonResponse;
+        serializeJson(doc, jsonResponse);
+
+        // Enviar la respuesta HTTP en formato JSON
+        String htmlResponse = "HTTP/1.1 200 OK\r\n";
+        htmlResponse += "Content-Type: application/json\r\n";  // Cambiar el tipo a JSON
+        htmlResponse += "Connection: close\r\n\r\n";
+        htmlResponse += jsonResponse;
+
+        client.print(htmlResponse);
+        delay(1);
+        client.stop();
+    }
 }
 
-// Función para manejar la solicitud en la raíz "/"
-void handleWeight() {
-  long weight = scale.get_units(10);  // Lee el peso promedio de 10 lecturas
-  
-  // Devuelve el peso como respuesta en formato JSON
-  String response = "{\"peso\": " + String(weight) + "}";
-  
-  server.send(200, "application/json", response);  // Envía la respuesta en formato JSON
+int hourFormat() {
+    time_t now = time(nullptr);
+    struct tm *timeinfo = localtime(&now);
+    return timeinfo->tm_hour;
 }
