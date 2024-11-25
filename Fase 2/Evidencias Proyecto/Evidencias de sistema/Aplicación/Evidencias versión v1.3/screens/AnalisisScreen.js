@@ -2,50 +2,47 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
-  TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
+  Image,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; // Importa el Picker desde @react-native-picker/picker
-import { BarChart, PieChart } from 'react-native-chart-kit';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-
-const ANALYSIS_OPTIONS = [
-  { label: 'Gráfico de Barras', value: 'bar' },
-  { label: 'Gráfico de Torta', value: 'pie' },
-];
+import { Picker } from '@react-native-picker/picker'; // Usando el Picker correcto
+import { PieChart, LineChart } from 'react-native-chart-kit'; // Mantén PieChart y LineChart
 
 function AnalisisScreen() {
-  const navigation = useNavigation();
-  const [pollosData, setPollosData] = useState([]);
-  const [comidaData, setComidaData] = useState([]);
+  const [cantidadPollos, setCantidadPollos] = useState(null);
+  const [tiposPollos, setTiposPollos] = useState([]);
+  const [gastosComida, setGastosComida] = useState(null);
+  const [tipoComida, setTipoComida] = useState(null);
+  const [proveedores, setProveedores] = useState([]);
+  const [gastosMensuales, setGastosMensuales] = useState([]);
+  const [sacosComida, setSacosComida] = useState([]); // Para los sacos de comida
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedChartType, setSelectedChartType] = useState('bar');
-  const [selectedChickenType, setSelectedChickenType] = useState('');
-  const [selectedFoodType, setSelectedFoodType] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('1'); // Mes seleccionado
+  const [selectedYear, setSelectedYear] = useState('2024'); // Año seleccionado
 
   useEffect(() => {
-    navigation.setOptions({
-      headerTitle: () => (
-        <Text style={styles.headerTitle}>Análisis de Datos</Text>
-      ),
-      headerTitleAlign: 'center',
-      headerTintColor: '#384EA2',
-    });
-
     const fetchData = async () => {
       try {
-        const pollosResponse = await axios.get('http://10.0.2.2:5000/api/pollos');
-        const comidaResponse = await axios.get('http://10.0.2.2:5000/api/comida');
-        
-        setPollosData(pollosResponse.data);
-        setComidaData(comidaResponse.data);
+        // Consultas a la API
+        const pollosResponse = await axios.get('http://10.0.2.2:5000/api/cantidad_pollos');
+        const tiposResponse = await axios.get('http://10.0.2.2:5000/api/tipos_pollos');
+        const gastosResponse = await axios.get(`http://10.0.2.2:5000/api/gastos_comida_mes?month=${selectedMonth}&year=${selectedYear}`);
+        const tipoComidaResponse = await axios.get('http://10.0.2.2:5000/api/tipo_comida_mas_consumida');
+        const proveedoresResponse = await axios.get('http://10.0.2.2:5000/api/proveedores_bolsas');
+        const sacosResponse = await axios.get('http://10.0.2.2:5000/api/tipo_comida_mas_consumida'); // La API para los sacos de comida
+
+        // Verificamos que los datos sean arrays antes de asignarlos
+        setCantidadPollos(pollosResponse.data.total_pollos);
+        setTiposPollos(Array.isArray(tiposResponse.data) ? tiposResponse.data : []);
+        setGastosComida(gastosResponse.data.total_gasto);
+        setGastosMensuales(Array.isArray(gastosResponse.data.mensuales) ? gastosResponse.data.mensuales : []);
+        setTipoComida(tipoComidaResponse.data);
+        setProveedores(Array.isArray(proveedoresResponse.data) ? proveedoresResponse.data : []);
+        setSacosComida(Array.isArray(sacosResponse.data) ? sacosResponse.data : []); // Los datos de los sacos
       } catch (err) {
-        setError(err.message);
         console.error('Error fetching data:', err.message);
       } finally {
         setLoading(false);
@@ -53,215 +50,189 @@ function AnalisisScreen() {
     };
 
     fetchData();
-  }, [navigation]);
-
-  const filterData = () => {
-    const filteredPollos = selectedChickenType
-      ? pollosData.filter(p => p.tipo === selectedChickenType)
-      : pollosData;
-
-    const filteredComida = selectedFoodType
-      ? comidaData.filter(c => c.tipo === selectedFoodType)
-      : comidaData;
-
-    return {
-      pollos: filteredPollos,
-      comida: filteredComida,
-    };
-  };
-
-  const { pollos, comida } = filterData();
+  }, [selectedMonth, selectedYear]);
 
   if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#384EA2" />
-      </View>
-    );
+    return <ActivityIndicator size="large" color="#384EA2" />;
   }
-
-  if (error) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Error al cargar los datos: {error}. Por favor, intenta de nuevo.</Text>
-      </View>
-    );
-  }
-
-  // Data for charts
-  const barChartData = {
-    labels: ['Pollos', 'Comida'],
-    datasets: [
-      {
-        data: [pollos.length, comida.length],
-      },
-    ],
-  };
-
-  const pieChartData = [
-    {
-      name: 'Pollos',
-      population: pollos.length,
-      color: '#384EA2',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    },
-    {
-      name: 'Comida',
-      population: comida.length,
-      color: '#FF6384',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    },
-  ];
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Image source={require('../assets/logo 1.png')} style={styles.logo} />
-        <TouchableOpacity>
-          <Icon name="search" size={30} color="#384EA2" />
-        </TouchableOpacity>
-      </View>
+    
+    <ScrollView contentContainerStyle={styles.container}>
+       <View style={styles.headerContainer}></View>
+       <Image source={require('../assets/logo 1.png')} style={styles.logo} />
+     
+      {/* Sección de Análisis */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Análisis de Pollos</Text>
+        <Text>Cantidad Total de Pollos: {cantidadPollos}</Text>
 
-      <View style={styles.filterContainer}>
-        <Text style={styles.filterLabel}>Tipo de Gallinas:</Text>
-        <Picker
-          selectedValue={selectedChickenType}
-          onValueChange={(itemValue) => setSelectedChickenType(itemValue)}
-        >
-          <Picker.Item label="Seleccione" value="" />
-          {pollosData.map((pollo) => (
-            <Picker.Item key={pollo.id} label={pollo.tipo} value={pollo.tipo} />
-          ))}
-        </Picker>
-
-        <Text style={styles.filterLabel}>Tipo de Comida:</Text>
-        <Picker
-          selectedValue={selectedFoodType}
-          onValueChange={(itemValue) => setSelectedFoodType(itemValue)}
-        >
-          <Picker.Item label="Seleccione" value="" />
-          {comidaData.map((comida) => (
-            <Picker.Item key={comida.id} label={comida.tipo} value={comida.tipo} />
-          ))}
-        </Picker>
-
-        <Text style={styles.filterLabel}>Tipo de Gráfico:</Text>
-        <Picker
-          selectedValue={selectedChartType}
-          onValueChange={(itemValue) => setSelectedChartType(itemValue)}
-        >
-          {ANALYSIS_OPTIONS.map(option => (
-            <Picker.Item key={option.value} label={option.label} value={option.value} />
-          ))}
-        </Picker>
-      </View>
-
-      <View style={styles.analysisContainer}>
-        <Text style={styles.analysisText}>Análisis de Datos</Text>
-        {selectedChartType === 'bar' ? (
-          <BarChart
-            data={barChartData}
-            width={350}
-            height={220}
-            yAxisLabel=""
-            chartConfig={{
-              backgroundColor: '#fff',
-              backgroundGradientFrom: '#fff',
-              backgroundGradientTo: '#fff',
-              decimalPlaces: 0,
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              style: {
-                borderRadius: 16,
-              },
-            }}
-            style={{
-              marginVertical: 8,
-              borderRadius: 16,
-            }}
-          />
-        ) : (
+        {/* Gráfico de Tipos de Pollos */}
+        {Array.isArray(tiposPollos) && tiposPollos.length > 0 && (
           <PieChart
-            data={pieChartData}
+            data={tiposPollos.map((item) => ({
+              name: item.tipo,
+              population: item.total,
+              color: '#384EA2',
+              legendFontColor: '#7F7F7F',
+              legendFontSize: 15,
+            }))}
             width={350}
             height={220}
             chartConfig={{
               backgroundColor: '#fff',
-              backgroundGradientFrom: '#fff',
-              backgroundGradientTo: '#fff',
               color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              style: {
-                borderRadius: 16,
-              },
             }}
             accessor="population"
             backgroundColor="transparent"
-            paddingLeft="15"
           />
         )}
       </View>
-    </View>
+
+      {/* Sección de Comida */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Gastos de Comida</Text>
+        <Text>Gastos del Mes en Comida: ${gastosComida}</Text>
+        <Text>Comida Más Consumida: {tipoComida?.nombre}</Text>
+        
+        {/* Selectores de Mes y Año */}
+        <Picker
+          selectedValue={selectedMonth}
+          onValueChange={(itemValue) => setSelectedMonth(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Enero" value="1" />
+          <Picker.Item label="Febrero" value="2" />
+          <Picker.Item label="Marzo" value="3" />
+          <Picker.Item label="Abril" value="4" />
+          <Picker.Item label="Mayo" value="5" />
+          <Picker.Item label="Junio" value="6" />
+          <Picker.Item label="Julio" value="7" />
+          <Picker.Item label="Agosto" value="8" />
+          <Picker.Item label="Septiembre" value="9" />
+          <Picker.Item label="Octubre" value="10" />
+          <Picker.Item label="Noviembre" value="11" />
+          <Picker.Item label="Diciembre" value="12" />
+        </Picker>
+
+        <Picker
+          selectedValue={selectedYear}
+          onValueChange={(itemValue) => setSelectedYear(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="2024" value="2024" />
+          <Picker.Item label="2023" value="2023" />
+        </Picker>
+
+        {/* Gráfico de Proveedores */}
+        <Text>Proveedores</Text>
+        {Array.isArray(proveedores) && proveedores.length > 0 && (
+          <PieChart
+            data={proveedores.map((item) => ({
+              name: item.proveedor,
+              population: item.total,
+              color: '#A384EA',
+              legendFontColor: '#7F7F7F',
+              legendFontSize: 15,
+            }))}
+            width={350}
+            height={220}
+            chartConfig={{
+              backgroundColor: '#fff',
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            }}
+            accessor="population"
+            backgroundColor="transparent"
+          />
+        )}
+      </View>
+
+      {/* Gráfico de Gastos Mensuales (Gráfico de Puntos) */}
+      {Array.isArray(gastosMensuales) && gastosMensuales.length > 0 && (
+        <LineChart
+          data={{
+            labels: gastosMensuales.map(item => item.mes), // Meses
+            datasets: [
+              {
+                data: gastosMensuales.map(item => item.total), // Gastos
+                strokeWidth: 2,
+              },
+            ],
+          }}
+          width={350}
+          height={220}
+          chartConfig={{
+            backgroundColor: '#fff',
+            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+          }}
+          style={styles.chart}
+        />
+      )}
+
+      {/* Gráfico de Sacos de Comida */}
+      {/* <Text>Tipos de Sacos de Comida</Text> */}
+      {Array.isArray(sacosComida) && sacosComida.length > 0 && (
+        <PieChart
+          data={sacosComida.map((item) => ({
+            name: item.nombre,
+            population: item.total,
+            color: '#FF6347',
+            legendFontColor: '#7F7F7F',
+            legendFontSize: 15,
+          }))}
+          width={350}
+          height={220}
+          chartConfig={{
+            backgroundColor: '#fff',
+            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+          }}
+          accessor="population"
+          backgroundColor="transparent"
+        />
+      )}
+    </ScrollView>
   );
 }
 
-export default AnalisisScreen;
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+    flexGrow: 1,
     padding: 20,
+    backgroundColor: '#fff',
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorText: {
-    color: 'red',
-  },
-  headerTitle: {
-    fontSize: 20,
+  title: {
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#384EA2',
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     marginBottom: 20,
+  },
+  section: {
+    marginBottom: 30,
   },
   logo: {
     width: 250,
     height: 60,
     resizeMode: 'contain',
   },
-  filterContainer: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 20,
-  },
-  filterLabel: {
-    fontSize: 18,
-    color: '#384EA2',
-    fontWeight: 'bold',
-  },
-  analysisContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  analysisText: {
-    fontSize: 20,
+  sectionTitle: {
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#384EA2',
     marginBottom: 10,
   },
+  chart: {
+    marginVertical: 16,
+    borderRadius: 16,
+    marginTop: 10,
+  },
+  picker: {
+    height: 50,
+    marginVertical: 10,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+  },
 });
+
+export default AnalisisScreen;
