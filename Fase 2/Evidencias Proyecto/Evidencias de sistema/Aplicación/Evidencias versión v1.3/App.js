@@ -116,7 +116,7 @@ function HomeScreen({ navigation }) {
             <Icon name="cutlery" size={24} color="#384EA2" />
           </View>
           <View style={styles.buttonContent}>
-            <Text style={styles.rectButtonText}>Cantidad de Comida</Text>
+            <Text style={styles.rectButtonText}>Registro de Comida</Text>
             <Text style={styles.rectButtonDescription}>Total de comida disponible para los pollos.</Text>
           </View>
         </TouchableOpacity>
