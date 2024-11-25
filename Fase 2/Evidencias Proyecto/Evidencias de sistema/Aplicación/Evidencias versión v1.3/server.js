@@ -373,17 +373,19 @@ app.get('/api/comida/most_consumed', (req, res) => {
       res.json(results);
     });
   });
-  app.get('/api/gastos_comida_mes', (req, res) => {
+   app.get('/api/gastos_comida_mes', (req, res) => {
     const { month, year } = req.query; // Suponiendo que recibimos el mes y año en los parámetros
+  
+    // Consulta SQL modificada para solo sumar la columna 'precio'
     db.query(
-      `SELECT SUM(precio * cantidad) AS total_gasto FROM sacos_comida WHERE MONTH(fecha_compra) = ? AND YEAR(fecha_compra) = ?`,
+      `SELECT SUM(precio) AS total_gasto FROM sacos_comida WHERE MONTH(fecha_compra) = ? AND YEAR(fecha_compra) = ?`,
       [month, year],
       (err, results) => {
         if (err) {
           console.error('Error al recuperar datos:', err);
           return res.status(500).json({ error: err.message });
         }
-        res.json(results[0]);
+        res.json(results[0] || { total_gasto: 0 }); // Si no hay resultados, devolver 0
       }
     );
   });
