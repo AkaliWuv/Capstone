@@ -104,13 +104,13 @@ function PollosScreen() {
       >
         <View style={styles.rowHeader}>
           <Text style={styles.rowText}>Tipo: {item.tipo}</Text>
-          <Text style={styles.rowText}>Cantidad: {item.cantidad} kg</Text>
+          <Text style={styles.rowText}>Cantidad: {item.cantidad} ud.</Text>
           <Icon name={isSelected ? 'chevron-up' : 'chevron-down'} size={20} color="#384EA2" />
         </View>
         {isSelected && (
           <View style={styles.rowDetails}>
             <Text style={styles.detailTitle}>Cantidad:</Text>
-            <Text style={styles.detailText}>{item.cantidad} kg</Text>
+            <Text style={styles.detailText}>{item.cantidad} ud.</Text>
             <Text style={styles.detailTitle}>Fecha Registro:</Text>
             <Text style={styles.detailText}>{item.fecha}</Text>
             <Text style={styles.detailTitle}>Hora:</Text>
