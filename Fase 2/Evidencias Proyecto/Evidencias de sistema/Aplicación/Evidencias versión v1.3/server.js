@@ -355,7 +355,61 @@ app.get('/api/comida/most_consumed', (req, res) => {
 });
 
   
-
+  app.get('/api/cantidad_pollos', (req, res) => {
+    db.query('SELECT SUM(cantidad) AS total_pollos FROM pollos', (err, results) => {
+      if (err) {
+        console.error('Error al recuperar datos:', err);
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(results[0]);
+    });
+  });
+  app.get('/api/tipos_pollos', (req, res) => {
+    db.query('SELECT tipo, SUM(cantidad) AS total FROM pollos GROUP BY tipo', (err, results) => {
+      if (err) {
+        console.error('Error al recuperar datos:', err);
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(results);
+    });
+  });
+  app.get('/api/gastos_comida_mes', (req, res) => {
+    const { month, year } = req.query; // Suponiendo que recibimos el mes y año en los parámetros
+    db.query(
+      `SELECT SUM(precio * cantidad) AS total_gasto FROM sacos_comida WHERE MONTH(fecha_compra) = ? AND YEAR(fecha_compra) = ?`,
+      [month, year],
+      (err, results) => {
+        if (err) {
+          console.error('Error al recuperar datos:', err);
+          return res.status(500).json({ error: err.message });
+        }
+        res.json(results[0]);
+      }
+    );
+  });
+  app.get('/api/tipo_comida_mas_consumida', (req, res) => {
+    db.query(
+      'SELECT nombre, SUM(cantidad) AS total FROM sacos_comida GROUP BY nombre ORDER BY total DESC LIMIT 1',
+      (err, results) => {
+        if (err) {
+          console.error('Error al recuperar datos:', err);
+          return res.status(500).json({ error: err.message });
+        }
+        res.json(results[0]);
+      }
+    );
+  });
+  app.get('/api/proveedores_bolsas', (req, res) => {
+    db.query('SELECT proveedor, COUNT(*) AS total FROM sacos_comida GROUP BY proveedor', (err, results) => {
+      if (err) {
+        console.error('Error al recuperar datos:', err);
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(results);
+    });
+  });
+  
+    
 
 // Start the server
 app.listen(PORT, () => {
