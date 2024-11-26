@@ -151,13 +151,13 @@ function ComidaScreen() {
       >
         <View style={styles.rowHeader}>
           <Text style={styles.rowText}>Tipo: {item.tipo}</Text>
-          <Text style={styles.rowText}>Cantidad: {item.cantidad} kg</Text>
+          <Text style={styles.rowText}>Cantidad: {item.cantidad} kg.</Text>
           <Icon name={isSelected ? 'chevron-up' : 'chevron-down'} size={20} color="#384EA2" />
         </View>
         {isSelected && (
           <View style={styles.rowDetails}>
             <Text style={styles.detailTitle}>Cantidad:</Text>
-            <Text style={styles.detailText}>{item.cantidad} kg</Text>
+            <Text style={styles.detailText}>{item.cantidad} kg.</Text>
             <Text style={styles.detailTitle}>Fecha Registro:</Text>
             <Text style={styles.detailText}>{item.fecha}</Text>
             <Text style={styles.detailTitle}>Hora:</Text>
@@ -344,7 +344,7 @@ function ComidaScreen() {
               renderItem={({ item }) => (
                 <View style={styles.stockRow}>
                   <Text style={styles.stockItemName}>{item.nombre}:</Text>
-                  <Text style={styles.stockItemQuantity}>    {item.cantidad} kg</Text>
+                  <Text style={styles.stockItemQuantity}>    {item.cantidad} kg.</Text>
                 </View>
               )}
             />
