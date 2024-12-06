@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "avijuelasv.10",
+    "slug": "avijuelasv.10",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "permissions": [],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tuempresa.avijuelasv10",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Necesitamos acceso a tu galería de fotos para seleccionar una imagen.",
+        "NSCameraUsageDescription": "Necesitamos acceso a tu cámara para tomar fotos.",
+        "NSLocationWhenInUseUsageDescription": "Necesitamos acceder a tu ubicación para mostrar el mapa correctamente.",
+    "NSLocationAlwaysUsageDescription": "Necesitamos acceso a tu ubicación para mostrar el mapa correctamente."
+      }
+    },
+    "android": {
+      "permissions": [
+    "CAMERA",
+    "READ_EXTERNAL_STORAGE",
+    "WRITE_EXTERNAL_STORAGE",
+    "ACCESS_FINE_LOCATION"
+  ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "scripts": {
+      "start": "node server.js"
+    },
+    "dependencies": {
+      "express": "^4.18.2",
+      "mysql2": "^3.2.0",
+      "body-parser": "^1.20.2",
+      "bcrypt": "^5.1.0",
+       "react-native-maps": "0.31.1"
+    }
+  }
+}
