@@ -3,7 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from 'reac
 import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { DarkModeContext } from '../DarkModeContext';
+<<<<<<< HEAD
 import { API_BASE_URL } from '../config';
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
 
 const RegistroComidaModal = ({ visible, onClose, onRegister, onReload }) => {
@@ -27,7 +30,11 @@ const RegistroComidaModal = ({ visible, onClose, onRegister, onReload }) => {
 
     const fetchTiposComida = async () => {
         try {
+<<<<<<< HEAD
             const response = await fetch(`${API_BASE_URL}/api/sacos_comida`);
+=======
+            const response = await fetch('http://10.0.2.2:5000/api/sacos_comida');
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
             if (!response.ok) {
                 throw new Error('Error en la respuesta del servidor');
             }
@@ -73,7 +80,11 @@ const RegistroComidaModal = ({ visible, onClose, onRegister, onReload }) => {
         // Verificar la cantidad disponible del saco seleccionado
         if (idSaco) {
             try {
+<<<<<<< HEAD
                 const response = await fetch(`${API_BASE_URL}/api/sacos_comida/${idSaco}`);
+=======
+                const response = await fetch(`http://10.0.2.2:5000/api/sacos_comida/${idSaco}`);
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
                 if (!response.ok) {
                     throw new Error('Error en la respuesta del servidor');
                 }
@@ -106,7 +117,11 @@ Cantidad disponible: ${cantidadRestante} kg.`);
             utcDateTime: new Date().toISOString(),
         };
 
+<<<<<<< HEAD
         fetch(`${API_BASE_URL}/api/comida`, {
+=======
+        fetch('http://10.0.2.2:5000/api/comida', {
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(registroData),
@@ -140,9 +155,15 @@ Cantidad disponible: ${cantidadRestante} kg.`);
     const closeSuccessModal = () => {
         setSuccessModalVisible(false);
         if (typeof onReload === 'function') {
+<<<<<<< HEAD
             onReload(); // Llama a la función de recarga
         }
         onClose(); // Cierra el modal
+=======
+            onReload();
+        }
+        onClose();
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
     };
 
     const closeErrorModal = () => {
@@ -182,6 +203,7 @@ Cantidad disponible: ${cantidadRestante} kg.`);
                         </Text>
     
                         <View style={styles.inputContainer}>
+<<<<<<< HEAD
     <Icon name="fastfood" size={20} color={isDarkMode ? '#AAA' : '#384EA2'} />
     <TextInput
         style={[
@@ -204,6 +226,25 @@ Cantidad disponible: ${cantidadRestante} kg.`);
     />
 </View>
 
+=======
+                            <Icon name="fastfood" size={20} color={isDarkMode ? '#AAA' : '#384EA2'} />
+                            <TextInput
+                                style={[
+                                    styles.input,
+                                    isDarkMode && {
+                                        backgroundColor: '#121212',
+                                        color: '#FFF',
+                                        borderColor: '#777',
+                                    },
+                                ]}
+                                placeholder="Cantidad (kg)"
+                                placeholderTextColor={isDarkMode ? '#AAA' : '#999'}
+                                keyboardType="numeric"
+                                value={cantidad}
+                                onChangeText={setCantidad}
+                            />
+                        </View>
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
     
                         <View style={styles.inputContainer}>
                             <Icon name="label" size={20} color={isDarkMode ? '#AAA' : '#384EA2'} />
@@ -222,14 +263,22 @@ Cantidad disponible: ${cantidadRestante} kg.`);
                                 <Picker.Item
                                     label="Selecciona un tipo"
                                     value=""
+<<<<<<< HEAD
                                     style={isDarkMode && { color: '#000' }} // Texto del picker en modo oscuro
+=======
+                                    style={isDarkMode && { color: '#FFF' }} // Texto del picker en modo oscuro
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
                                 />
                                 {tiposComida.map((saco) => (
                                     <Picker.Item
                                         key={saco.id}
                                         label={saco.nombre}
                                         value={saco.id}
+<<<<<<< HEAD
                                         style={isDarkMode && { color: '#000' }} // Texto del picker en modo oscuro
+=======
+                                        style={isDarkMode && { color: '#FFF' }} // Texto del picker en modo oscuro
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
                                     />
                                 ))}
                             </Picker>

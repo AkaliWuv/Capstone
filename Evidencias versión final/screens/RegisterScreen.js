@@ -185,7 +185,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden', // Para evitar que los bordes sobresalgan
   },
   prefixContainer: {
+<<<<<<< HEAD
     backgroundColor: '#fffc', // Fondo del prefijo
+=======
+    backgroundColor: '#f0f0f0', // Fondo del prefijo
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
     paddingHorizontal: 15,
     justifyContent: 'center',
     alignItems: 'center',

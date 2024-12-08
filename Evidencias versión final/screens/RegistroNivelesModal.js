@@ -2,8 +2,11 @@ import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { DarkModeContext } from '../DarkModeContext';
+<<<<<<< HEAD
 import { API_BASE_URL } from '../config';
 
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
 
 const RegistroNivelesModal = ({ visible, onClose, onRegister, onReload, route }) => {
@@ -48,7 +51,11 @@ const RegistroNivelesModal = ({ visible, onClose, onRegister, onReload, route })
         };
 
         try {
+<<<<<<< HEAD
             const response = await fetch(`${API_BASE_URL}/api/sacos_comida`, {
+=======
+            const response = await fetch('http://10.0.2.2:5000/api/sacos_comida', {
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(registroData),
@@ -132,6 +139,7 @@ const RegistroNivelesModal = ({ visible, onClose, onRegister, onReload, route })
                         </View>
     
                         <View style={styles.inputContainer}>
+<<<<<<< HEAD
     <Icon name="attach-money" size={20} color={isDarkMode ? '#AAA' : '#384EA2'} />
     <TextInput
         style={[
@@ -152,6 +160,25 @@ const RegistroNivelesModal = ({ visible, onClose, onRegister, onReload, route })
         }}
     />
 </View>
+=======
+                            <Icon name="attach-money" size={20} color={isDarkMode ? '#AAA' : '#384EA2'} />
+                            <TextInput
+                                style={[
+                                    styles.input,
+                                    isDarkMode && {
+                                        backgroundColor: '#121212',
+                                        color: '#FFF',
+                                        borderColor: '#777',
+                                    },
+                                ]}
+                                placeholder="Precio"
+                                placeholderTextColor={isDarkMode ? '#AAA' : '#999'}
+                                keyboardType="numeric"
+                                value={precio}
+                                onChangeText={setPrecio}
+                            />
+                        </View>
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
     
                         <View style={styles.inputContainer}>
                             <Icon name="business" size={20} color={isDarkMode ? '#AAA' : '#384EA2'} />
@@ -172,6 +199,7 @@ const RegistroNivelesModal = ({ visible, onClose, onRegister, onReload, route })
                         </View>
     
                         <View style={styles.inputContainer}>
+<<<<<<< HEAD
     <Icon name="add-shopping-cart" size={20} color={isDarkMode ? '#AAA' : '#384EA2'} />
     <TextInput
         style={[
@@ -192,6 +220,25 @@ const RegistroNivelesModal = ({ visible, onClose, onRegister, onReload, route })
         }}
     />
 </View>
+=======
+                            <Icon name="add-shopping-cart" size={20} color={isDarkMode ? '#AAA' : '#384EA2'} />
+                            <TextInput
+                                style={[
+                                    styles.input,
+                                    isDarkMode && {
+                                        backgroundColor: '#121212',
+                                        color: '#FFF',
+                                        borderColor: '#777',
+                                    },
+                                ]}
+                                placeholder="Cantidad"
+                                placeholderTextColor={isDarkMode ? '#AAA' : '#999'}
+                                keyboardType="numeric"
+                                value={cantidad}
+                                onChangeText={setCantidad}
+                            />
+                        </View>
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
     
                         <View style={styles.readOnlyContainer}>
                             <Icon name="calendar-today" size={20} color={isDarkMode ? '#AAA' : '#384EA2'} />

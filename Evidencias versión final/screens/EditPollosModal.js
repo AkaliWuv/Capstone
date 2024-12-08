@@ -3,8 +3,11 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Image } fro
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker';
 import { DarkModeContext } from '../DarkModeContext';
+<<<<<<< HEAD
 import { API_BASE_URL } from '../config';
 
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
 
 const EditComidaModal = ({ visible, onClose, onUpdate, itemToEdit }) => {
@@ -75,7 +78,11 @@ const EditComidaModal = ({ visible, onClose, onUpdate, itemToEdit }) => {
             });
         }
     
+<<<<<<< HEAD
         fetch(`${API_BASE_URL}/api/pollos/${itemToEdit.id}`, {
+=======
+        fetch(`http://10.0.2.2:5000/api/pollos/${itemToEdit.id}`, {
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
             method: 'PUT',
             body: updatedData,
         })
@@ -151,6 +158,7 @@ const EditComidaModal = ({ visible, onClose, onUpdate, itemToEdit }) => {
                         </View>
     
                         <View style={styles.inputContainer}>
+<<<<<<< HEAD
     <Icon name="fastfood" size={20} color={isDarkMode ? '#AAAAAA' : '#384EA2'} />
     <TextInput
         style={[
@@ -173,6 +181,25 @@ const EditComidaModal = ({ visible, onClose, onUpdate, itemToEdit }) => {
     />
 </View>
 
+=======
+                            <Icon name="fastfood" size={20} color={isDarkMode ? '#AAAAAA' : '#384EA2'} />
+                            <TextInput
+                                style={[
+                                    styles.input,
+                                    isDarkMode && {
+                                        backgroundColor: '#121212',
+                                        color: '#FFFFFF',
+                                        borderColor: '#555',
+                                    },
+                                ]}
+                                placeholder="Cantidad (kg)"
+                                placeholderTextColor={isDarkMode ? '#AAAAAA' : '#999'}
+                                keyboardType="numeric"
+                                value={cantidad}
+                                onChangeText={setCantidad}
+                            />
+                        </View>
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
     
                         <View style={styles.inputContainer}>
                             <Icon name="label" size={20} color={isDarkMode ? '#AAAAAA' : '#384EA2'} />

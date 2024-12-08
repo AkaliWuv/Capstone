@@ -16,11 +16,17 @@ import { Picker } from '@react-native-picker/picker';
 import EditPollosModal from './EditPollosModal';
 import RegistroPollosModal from './RegistroPollosModal';
 import { DarkModeContext } from '../DarkModeContext';
+<<<<<<< HEAD
 import { API_BASE_URL } from '../config';
 
 
 
 function PollosScreen({ navigation, route, setIsBypassingPin }) {
+=======
+
+
+function PollosScreen({ navigation, route }) {
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
   const [comidaData, setComidaData] = useState([]);
   const [expandedItem, setExpandedItem] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(5);
@@ -51,7 +57,11 @@ function PollosScreen({ navigation, route, setIsBypassingPin }) {
           text: 'Eliminar',
           onPress: async () => {
             try {
+<<<<<<< HEAD
               const response = await fetch(`${API_BASE_URL}/api/pollos/${itemId}`, {
+=======
+              const response = await fetch(`http://10.0.2.2:5000/api/pollos/${itemId}`, {
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
                 method: 'DELETE',
               });
               if (!response.ok) {
@@ -70,7 +80,11 @@ function PollosScreen({ navigation, route, setIsBypassingPin }) {
 
   const fetchComidaData = async () => {
     try {
+<<<<<<< HEAD
       const response = await fetch(`${API_BASE_URL}/api/pollos`);
+=======
+      const response = await fetch('http://10.0.2.2:5000/api/pollos');
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
       if (!response.ok) {
         throw new Error('Error fetching data');
       }
@@ -78,7 +92,11 @@ function PollosScreen({ navigation, route, setIsBypassingPin }) {
       const formattedData = data.map(item => ({
         ...item,
         fecha: item.fecha.split('T')[0],
+<<<<<<< HEAD
         imagen: item.imagen ? `${API_BASE_URL}${item.imagen}` : null,
+=======
+        imagen: item.imagen ? `http://10.0.2.2:5000${item.imagen}` : null,
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
       }));
       setComidaData(formattedData);
     } catch (error) {
@@ -191,8 +209,13 @@ function PollosScreen({ navigation, route, setIsBypassingPin }) {
                         isDarkMode && { color: '#CCCCCC' }, // Texto expandido en modo oscuro
                     ]}
                 >
+<<<<<<< HEAD
                     Info: Nuevo ingreso de comida con fecha: {item.fecha} a las {item.hora}{"\n"}
                     Se ingresaron: {item.cantidad} pollos, de tipo: {item.tipo}{"\n"}
+=======
+                    Info: Nuevo ingreso de comida con fecha: {item.fecha}{"\n"}
+                    Se ingresaron: {item.cantidad} kilos de comida de tipo: {item.tipo}{"\n"}
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
                     {item.descripcion
                         ? `Descripción: ${item.descripcion}`
                         : 'Sin descripción'}
@@ -426,11 +449,19 @@ function PollosScreen({ navigation, route, setIsBypassingPin }) {
 
         {/* Modales */}
         <RegistroPollosModal
+<<<<<<< HEAD
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onRegister={fetchComidaData}
         setIsBypassingPin={setIsBypassingPin} // Pasar bypass al modal
       />
+=======
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            onRegister={fetchComidaData}
+            isDarkMode={isDarkMode} // Pasar modo oscuro
+        />
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
         <EditPollosModal
             visible={editModalVisible}

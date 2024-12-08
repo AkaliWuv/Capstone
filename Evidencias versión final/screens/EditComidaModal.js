@@ -2,8 +2,11 @@ import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { DarkModeContext } from '../DarkModeContext';
+<<<<<<< HEAD
 import { API_BASE_URL } from '../config';
 
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
 const EditComidaModal = ({ visible, onClose, onUpdate, itemToEdit }) => {
     const [descripcion, setDescripcion] = useState('');
@@ -36,7 +39,11 @@ const EditComidaModal = ({ visible, onClose, onUpdate, itemToEdit }) => {
             console.log('Enviando datos al servidor:', updatedData);
     
             // Cambiar al endpoint correcto para actualizar el campo descripción
+<<<<<<< HEAD
             const response = await fetch(`${API_BASE_URL}/api/comida/${itemToEdit.id}`, {
+=======
+            const response = await fetch(`http://10.0.2.2:5000/api/comida/${itemToEdit.id}`, {
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

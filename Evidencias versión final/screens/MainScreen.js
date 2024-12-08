@@ -13,8 +13,11 @@ import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MapView, { Marker } from 'react-native-maps';
 import { DarkModeContext } from '../DarkModeContext';
+<<<<<<< HEAD
 import { WebView } from 'react-native-webview';
 import { API_BASE_URL } from '../config';
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 import * as Location from 'expo-location';  // Importa la librería de ubicación
 
 const categories = [
@@ -23,6 +26,7 @@ const categories = [
 ];
 
 export default function MainScreen({ navigation, route }) {
+<<<<<<< HEAD
   const [location, setLocation] = useState(null); // Ubicación del dispositivo
   const [sensorData, setSensorData] = useState(null); // Datos del sensor
   const [errorMsg, setErrorMsg] = useState(null); // Error general
@@ -84,10 +88,68 @@ export default function MainScreen({ navigation, route }) {
     return (
       <View style={[styles.container, isDarkMode && { backgroundColor: '#121212' }]}>
         <Text style={[styles.errorText, isDarkMode && { color: '#FFFFFF' }]}>{errorMsg}</Text>
+=======
+  const [location, setLocation] = useState(null);  // Guarda la ubicación del dispositivo
+  const [errorMsg, setErrorMsg] = useState(null);
+  const { isDarkMode, toggleTheme } = useContext(DarkModeContext);
+  const [comidaCount, setComidaCount] = useState(0);  // Estado para la cantidad de comida
+  const [pollosCount, setPollosCount] = useState(0);  // Estado para la cantidad de pollos
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location.coords);
+  
+      // Obtener la cantidad de pollos
+      try {
+        const pollosResponse = await axios.get('http://10.0.2.2:5000/api/cantidad_pollos');
+        console.log('Pollos Response:', pollosResponse.data);  // Log de respuesta pollos
+        if (pollosResponse.data && pollosResponse.data.total_pollos) {
+          setPollosCount(pollosResponse.data.total_pollos);
+          console.log('Pollos count actualizado:', pollosCount);  // Verifica si se actualizó correctamente
+        } else {
+          console.error('Respuesta inesperada para pollos:', pollosResponse.data);
+        }
+      } catch (err) {
+        console.error('Error fetching pollos data:', err.message);  // Log de error en pollos
+      }
+  
+      // Obtener la cantidad de comida
+      try {
+        const comidaResponse = await axios.get('http://10.0.2.2:5000/api/cantidad_comida');
+        console.log('Comida Response:', comidaResponse.data);  // Log de respuesta comida
+  
+        // Verificar si la respuesta tiene el valor correcto
+        if (comidaResponse.data && comidaResponse.data.total_comida !== undefined) {
+          console.log('Total comida recibido:', comidaResponse.data.total_comida);  // Verifica el valor específico
+          setComidaCount(comidaResponse.data.total_comida);
+        } else {
+          console.error('Respuesta inesperada para comida:', comidaResponse.data);  // Si el valor no está disponible
+        }
+      } catch (err) {
+        console.error('Error fetching comida data:', err.message);  // Log de error en comida
+      }
+    })();
+  }, []);
+  
+  
+
+  // Si la ubicación no está disponible, muestra un mensaje de error
+  if (errorMsg) {
+    return (
+      <View style={styles.container}>
+        <Text>{errorMsg}</Text>
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
       </View>
     );
   }
 
+<<<<<<< HEAD
   // Mostrar cargando si faltan ubicación o datos del sensor
   if (!location || !sensorData) {
     return (
@@ -104,6 +166,34 @@ export default function MainScreen({ navigation, route }) {
     );
   }
   
+=======
+  // Si la ubicación aún no está disponible, muestra un cargando
+  if (!location) {
+    return (
+        <View
+            style={[
+                styles.container,
+                isDarkMode && { backgroundColor: '#1E1E1E' }, // Fondo del contenedor en modo oscuro
+            ]}
+        >
+            <View style={styles.loadingContainer}>
+                <Image
+                    source={require('../assets/logo.png')} // Ruta local de la imagen
+                    style={styles.loadingImage} // Aplicamos estilo para centrar la imagen
+                />
+                <Text
+                    style={[
+                        styles.loadingText,
+                        isDarkMode && { color: '#FFFFFF' }, // Texto en modo oscuro
+                    ]}
+                >
+                    
+                </Text>
+            </View>
+        </View>
+    );
+}
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
   
   
@@ -152,6 +242,7 @@ export default function MainScreen({ navigation, route }) {
 
         <ScrollView>
             {/* Special Offers */}
+<<<<<<< HEAD
             <View style={[styles.sensorDataContainer, isDarkMode && { backgroundColor: '#333' }]}>
     {/* Gráfico */}
     <View style={styles.graphContainer}>
@@ -165,6 +256,37 @@ export default function MainScreen({ navigation, route }) {
     Peso de la última comida: {sensorData.field1} Kg
     </Text>
   </View>
+=======
+            <View
+                style={[
+                    styles.specialOffer,
+                    isDarkMode && { backgroundColor: '#333', borderColor: '#555' }, // Oferta especial en modo oscuro
+                ]}
+            >
+                <View style={styles.offerText}>
+                    <Text
+                        style={[
+                            styles.offerPercent,
+                            isDarkMode && { color: '#FFFFFF' }, // Texto del porcentaje en modo oscuro
+                        ]}
+                    >
+                        30%
+                    </Text>
+                    <Text
+                        style={[
+                            styles.offerDescription,
+                            isDarkMode && { color: '#AAAAAA' }, // Descripción en modo oscuro
+                        ]}
+                    >
+                        DISCOUNT ONLY VALID FOR TODAY!
+                    </Text>
+                </View>
+                <Image
+                    source={require('../assets/logo 1.png')}
+                    style={styles.offerImage}
+                />
+            </View>
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
             {/* Mapa dentro del rectángulo */}
             <View style={styles.mapContainer}>
@@ -547,6 +669,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#384EA1',
   },
+<<<<<<< HEAD
   specialOffer: {
     flexDirection: 'column',
     backgroundColor: '#384EA1',
@@ -575,4 +698,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
   },
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 });

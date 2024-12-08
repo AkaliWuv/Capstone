@@ -2,8 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DarkModeContext } from '../DarkModeContext'; // Importa el contexto de modo oscuro
+<<<<<<< HEAD
 import { API_BASE_URL } from '../config';
 
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
 const CreatePinScreen = ({ navigation }) => {
   const [pin, setPin] = useState('');
@@ -30,7 +33,11 @@ const CreatePinScreen = ({ navigation }) => {
 
       const { name, phone, email } = JSON.parse(userDetails);
 
+<<<<<<< HEAD
       const response = await fetch(`${API_BASE_URL}/register`, {
+=======
+      const response = await fetch('http://10.0.2.2:5000/register', {
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, phone, email, pin }),

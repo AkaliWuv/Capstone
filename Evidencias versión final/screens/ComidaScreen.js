@@ -16,8 +16,11 @@ import { Picker } from '@react-native-picker/picker';
 import EditComidaModal from './EditComidaModal'; // Ensure this path is correct
 import { Modal } from 'react-native';
 import { DarkModeContext } from '../DarkModeContext';
+<<<<<<< HEAD
 import { API_BASE_URL } from '../config';
 
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
 
 
@@ -142,7 +145,11 @@ function ComidaScreen({ navigation, route }) {
           text: 'Eliminar',
           onPress: async () => {
             try {
+<<<<<<< HEAD
               const response = await fetch(`${API_BASE_URL}/api/comida/${itemId}`, {
+=======
+              const response = await fetch(`http://10.0.2.2:5000/api/comida/${itemId}`, {
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
                 method: 'DELETE',
               });
               if (!response.ok) {
@@ -162,14 +169,22 @@ function ComidaScreen({ navigation, route }) {
   const fetchComidaData = async () => {
     try {
       // Obtener los datos de comida
+<<<<<<< HEAD
       const comidaResponse = await fetch(`${API_BASE_URL}/api/comida`);
+=======
+      const comidaResponse = await fetch('http://10.0.2.2:5000/api/comida');
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
       if (!comidaResponse.ok) {
         throw new Error('Error fetching comida data');
       }
       const comidaData = await comidaResponse.json();
   
       // Obtener los tipos de sacos_comida
+<<<<<<< HEAD
       const tiposResponse = await fetch(`${API_BASE_URL}/api/sacos_comida`);
+=======
+      const tiposResponse = await fetch('http://10.0.2.2:5000/api/sacos_comida');
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
       if (!tiposResponse.ok) {
         throw new Error('Error fetching tipos data');
       }
@@ -576,11 +591,18 @@ function ComidaScreen({ navigation, route }) {
 
       {/* Modales */}
       <RegistroComidaModal
+<<<<<<< HEAD
     visible={modalVisible}
     onClose={() => setModalVisible(false)}
     onReload={fetchComidaData} // Recarga los datos de comida y los tipos de sacos
     onRegister={fetchComidaData}
 />
+=======
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onRegister={fetchComidaData} // Call fetchComidaData after registering
+      />
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
       {/* Edit modal to edit items */}
       <EditComidaModal

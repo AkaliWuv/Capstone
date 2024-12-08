@@ -18,7 +18,10 @@ import * as Print from 'expo-print';
 import { DarkModeContext } from '../DarkModeContext';
 import { shareAsync } from 'expo-sharing';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+<<<<<<< HEAD
 import { API_BASE_URL } from '../config';
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
 
 function AnalisisScreen({ navigation, route }) {
@@ -38,12 +41,21 @@ function AnalisisScreen({ navigation, route }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
+<<<<<<< HEAD
         const pollosResponse = await axios.get(`${API_BASE_URL}/api/cantidad_pollos`);
         const tiposResponse = await axios.get(`${API_BASE_URL}/api/tipos_pollos`);
         const gastosResponse = await axios.get(`${API_BASE_URL}/api/gastos_comida_mes?year=${selectedYear}`);
         const tipoComidaResponse = await axios.get(`${API_BASE_URL}/api/tipo_comida_mas_consumida`);
         const proveedoresResponse = await axios.get(`${API_BASE_URL}/api/proveedores_bolsas`);
         const sacosResponse = await axios.get(`${API_BASE_URL}/api/tipo_comida_mas_consumida`);
+=======
+        const pollosResponse = await axios.get('http://10.0.2.2:5000/api/cantidad_pollos');
+        const tiposResponse = await axios.get('http://10.0.2.2:5000/api/tipos_pollos');
+        const gastosResponse = await axios.get(`http://10.0.2.2:5000/api/gastos_comida_mes?year=${selectedYear}`);
+        const tipoComidaResponse = await axios.get('http://10.0.2.2:5000/api/tipo_comida_mas_consumida');
+        const proveedoresResponse = await axios.get('http://10.0.2.2:5000/api/proveedores_bolsas');
+        const sacosResponse = await axios.get('http://10.0.2.2:5000/api/tipo_comida_mas_consumida');
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
   
         setCantidadPollos(pollosResponse.data.total_pollos);
         setTiposPollos(tiposResponse.data || []);

@@ -5,8 +5,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { DarkModeContext } from '../DarkModeContext';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+<<<<<<< HEAD
 import { API_BASE_URL } from '../config';
 
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
 export default function PerfilScreen({ navigation, route }) {
   const [modalPinVisible, setModalPinVisible] = useState(false);
@@ -26,7 +29,11 @@ export default function PerfilScreen({ navigation, route }) {
     const fetchUserId = async () => {
       try {
         // Hacer la llamada a la API para obtener el ID
+<<<<<<< HEAD
         const response = await fetch(`${API_BASE_URL}/api/user`);
+=======
+        const response = await fetch('http://10.0.2.2:5000/api/user');
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
         const data = await response.json();
         if (response.ok) {
           setUserId(data.id); // Guardamos el ID en el estado
@@ -80,19 +87,31 @@ export default function PerfilScreen({ navigation, route }) {
     let response;
 
     if (campo === 'name' && name) {
+<<<<<<< HEAD
       response = await fetch(`${API_BASE_URL}/api/user/name`, {
+=======
+      response = await fetch('http://10.0.2.2:5000/api/user/name', {
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: userId, name }),
       });
     } else if (campo === 'phone' && phone) {
+<<<<<<< HEAD
       response = await fetch(`${API_BASE_URL}/api/user/phone`, {
+=======
+      response = await fetch('http://10.0.2.2:5000/api/user/phone', {
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: userId, phone }),
       });
     } else if (campo === 'email' && email) {
+<<<<<<< HEAD
       response = await fetch(`${API_BASE_URL}/api/user/email`, {
+=======
+      response = await fetch('http://10.0.2.2:5000/api/user/email', {
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: userId, email }),
@@ -108,7 +127,11 @@ export default function PerfilScreen({ navigation, route }) {
   };
 
 
+<<<<<<< HEAD
   
+=======
+  // Función para cerrar sesión
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
   // Función para cerrar sesión
   const handleLogout = async () => {
     Alert.alert(
@@ -317,13 +340,20 @@ export default function PerfilScreen({ navigation, route }) {
   visible={modalEditVisible}
   animationType="slide"
   transparent={true}
+<<<<<<< HEAD
   onRequestClose={() => setModalEditVisible(false)}
+=======
+  onRequestClose={() => setModalEditVisible(false)} // Cerrar modal
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 >
   <View style={[styles.modalBackground, isDarkMode && { backgroundColor: 'rgba(0, 0, 0, 0.8)' }]}>
     <View style={[styles.modalContent, isDarkMode && { backgroundColor: '#333' }]}>
       <Text style={[styles.modalTitle, isDarkMode && { color: '#DDD' }]}>Editar Datos Personales</Text>
+<<<<<<< HEAD
       
       {/* Campo de Nombre */}
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
       <TextInput
         style={[
           styles.input,
@@ -340,6 +370,7 @@ export default function PerfilScreen({ navigation, route }) {
       />
       <TouchableOpacity
         style={[styles.button, isDarkMode && { backgroundColor: '#99A499' }]}
+<<<<<<< HEAD
         onPress={() => {
           if (!name.trim()) {
             Alert.alert('Error', 'El nombre no puede estar vacío');
@@ -352,6 +383,12 @@ export default function PerfilScreen({ navigation, route }) {
       </TouchableOpacity>
 
       {/* Campo de Teléfono */}
+=======
+        onPress={() => handleUpdateData('name')}
+      >
+        <Text style={[styles.buttonText, isDarkMode && { color: '#333' }]}>Actualizar Nombre</Text>
+      </TouchableOpacity>
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
       <TextInput
         style={[
           styles.input,
@@ -361,6 +398,7 @@ export default function PerfilScreen({ navigation, route }) {
             borderColor: '#777',
           },
         ]}
+<<<<<<< HEAD
         placeholder="+569XXXXXXXX"
         placeholderTextColor={isDarkMode ? '#AAA' : '#666'}
         value={phone}
@@ -390,6 +428,20 @@ export default function PerfilScreen({ navigation, route }) {
       </TouchableOpacity>
 
       {/* Campo de Correo Electrónico */}
+=======
+        placeholder="Nuevo Teléfono"
+        placeholderTextColor={isDarkMode ? '#AAA' : '#666'}
+        value={phone}
+        onChangeText={setPhone}
+        keyboardType="numeric"
+      />
+      <TouchableOpacity
+        style={[styles.button, isDarkMode && { backgroundColor: '#99A499' }]}
+        onPress={() => handleUpdateData('phone')}
+      >
+        <Text style={[styles.buttonText, isDarkMode && { color: '#333' }]}>Actualizar Teléfono</Text>
+      </TouchableOpacity>
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
       <TextInput
         style={[
           styles.input,
@@ -407,6 +459,7 @@ export default function PerfilScreen({ navigation, route }) {
       />
       <TouchableOpacity
         style={[styles.button, isDarkMode && { backgroundColor: '#99A499' }]}
+<<<<<<< HEAD
         onPress={() => {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (!emailRegex.test(email)) {
@@ -420,6 +473,12 @@ export default function PerfilScreen({ navigation, route }) {
       </TouchableOpacity>
 
       {/* Botón Cancelar */}
+=======
+        onPress={() => handleUpdateData('email')}
+      >
+        <Text style={[styles.buttonText, isDarkMode && { color: '#333' }]}>Actualizar Correo</Text>
+      </TouchableOpacity>
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
       <TouchableOpacity
         style={[
           styles.button,
@@ -721,6 +780,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#384EA1',
   },
+<<<<<<< HEAD
   phoneInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -741,4 +801,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000',
   },
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 });

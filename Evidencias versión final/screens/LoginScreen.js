@@ -1,18 +1,27 @@
 import React, { useState, useContext } from 'react';
+<<<<<<< HEAD
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, Modal } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DarkModeContext } from '../DarkModeContext';
 import { API_BASE_URL } from '../config';
 
+=======
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DarkModeContext } from '../DarkModeContext';
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
 export default function LoginScreen({ navigation }) {
   const [name, setName] = useState('');
   const [pin, setPin] = useState('');
+<<<<<<< HEAD
   const [modalVisible, setModalVisible] = useState(false);
   const [recoverName, setRecoverName] = useState('');
   const [recoverPhone, setRecoverPhone] = useState('');
   const [recoverEmail, setRecoverEmail] = useState('');
   const [newPin, setNewPin] = useState('');
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
   const { isDarkMode } = useContext(DarkModeContext);
 
   const handleLogin = async () => {
@@ -27,7 +36,11 @@ export default function LoginScreen({ navigation }) {
         return;
       }
 
+<<<<<<< HEAD
       const response = await fetch(`${API_BASE_URL}/api/login`, {
+=======
+      const response = await fetch('http://10.0.2.2:5000/api/login', {
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, pin }),
@@ -47,6 +60,7 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+<<<<<<< HEAD
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -132,6 +146,8 @@ const handlePhoneChange = (value) => {
     }
   };
 
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
   return (
     <View
       style={[
@@ -201,7 +217,11 @@ const handlePhoneChange = (value) => {
         </Text>
       </TouchableOpacity>
 
+<<<<<<< HEAD
       <TouchableOpacity onPress={handleNavigateToRegister}>
+=======
+      <TouchableOpacity onPress={() => navigation.navigate('Intro')}>
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
         <Text
           style={[
             styles.signUpText,
@@ -211,6 +231,7 @@ const handlePhoneChange = (value) => {
           ¿No tienes una Cuenta? Registrate
         </Text>
       </TouchableOpacity>
+<<<<<<< HEAD
 
       <TouchableOpacity onPress={() => setModalVisible(true)}>
         <Text
@@ -285,6 +306,8 @@ const handlePhoneChange = (value) => {
           </View>
         </View>
       </Modal>
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
     </View>
   );
 }
@@ -319,14 +342,21 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingLeft: 10,
     fontSize: 16,
+<<<<<<< HEAD
     marginBottom: 10,
+=======
+    marginBottom: 20,
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
   },
   button: {
     backgroundColor: '#374EA3',
     paddingVertical: 15,
     borderRadius: 5,
     alignItems: 'center',
+<<<<<<< HEAD
     marginBottom: 10,
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
   },
   buttonText: {
     color: '#fff',
@@ -339,6 +369,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 10,
   },
+<<<<<<< HEAD
   resetPinText: {
     textAlign: 'center',
     color: '#374EA3',
@@ -365,4 +396,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
+=======
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 });

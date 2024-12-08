@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+<<<<<<< HEAD
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker';
@@ -125,6 +126,164 @@ const RegistroPollosModal = ({ visible, onClose, onRegister, onReload, setIsBypa
     }
     onClose();
   };
+=======
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Alert, Image } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import * as ImagePicker from 'expo-image-picker';
+import { DarkModeContext } from '../DarkModeContext';
+import { Alert as RNAlert } from 'react-native'; // Renombrar Alert
+
+const RegistroPollosModal = ({ visible, onClose, onRegister, onReload }) => {
+    const [cantidad, setCantidad] = useState('');
+    const [descripcion, setDescripcion] = useState('');
+    const [tipo, setTipo] = useState('');
+    const [fecha, setFecha] = useState('');
+    const [hora, setHora] = useState('');
+    const [imagen, setImagen] = useState(null); // Estado para la imagen seleccionada
+    const [successModalVisible, setSuccessModalVisible] = useState(false);
+    const { isDarkMode, toggleTheme } = useContext(DarkModeContext);
+
+    const getCurrentDateTime = () => {
+        const currentDate = new Date().toLocaleString('es-CL', { timeZone: 'America/Santiago' });
+        const [date, time] = currentDate.split(', ');
+        return { date, time };
+    };
+
+    useEffect(() => {
+        const { date, time } = getCurrentDateTime();
+        setFecha(date);
+        setHora(time);
+        const timerId = setInterval(() => {
+            const { date, time } = getCurrentDateTime();
+            setFecha(date);
+            setHora(time);
+        }, 60000);
+
+        return () => clearInterval(timerId);
+    }, []);
+
+    const handleImagePick = async () => {
+        try {
+            // Pedir permisos para acceder a la galería
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                RNAlert.alert('Permiso denegado', 'No se tiene permiso para acceder a la galería.');
+                return;
+            }
+    
+            // Abrir la galería para seleccionar una imagen
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaType: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: false, // No permitir edición de la imagen
+                quality: 1,  // Calidad máxima
+            });
+    
+            console.log(result);  // Ver todo el objeto `result` para verificar que tenga `uri`
+    
+            // Verifica si el usuario canceló la selección
+            if (result.canceled) {
+                console.log('El usuario canceló la selección de la imagen');
+                return;
+            }
+    
+            // Aquí accedemos a la URI correctamente
+            if (result.assets && result.assets.length > 0) {
+                const imageUri = result.assets[0].uri;
+                console.log('Imagen seleccionada:', imageUri);
+    
+                if (imageUri) {
+                    setImagen(imageUri);  // Guardamos la URI en el estado
+                } else {
+                    console.log("No se obtuvo una URI válida para la imagen.");
+                }
+            } else {
+                console.log("No se encontraron imágenes en el resultado.");
+            }
+    
+        } catch (error) {
+            console.error('Error al seleccionar la imagen:', error);
+        }
+    };
+    
+    
+      
+    
+    
+    
+    
+
+      const handleRegister = () => {
+        if (!cantidad || isNaN(cantidad) || Number(cantidad) <= 0) {
+          RNAlert.alert('Error', 'Por favor ingresa una cantidad válida mayor que 0.');
+          return;
+        }
+      
+        const formData = new FormData();
+        formData.append('cantidad', Number(cantidad));
+        formData.append('descripcion', descripcion || '');
+        formData.append('tipo', tipo || '');
+        formData.append('fecha', fecha);
+        formData.append('hora', hora);
+        formData.append('utcDateTime', new Date().toISOString());
+      
+        // Verificar si la imagen está seleccionada
+        if (imagen) {
+          const imageUri = imagen;
+          const uriParts = imageUri.split('.');  // Obtener la extensión del archivo
+          const fileType = uriParts[uriParts.length - 1]; // Ojo con esto, asegúrate de que la extensión sea válida
+      
+          // Prepara la imagen para el FormData
+          formData.append('imagen', {
+            uri: imageUri,
+            name: `image.${fileType}`,
+            type: `image/${fileType}`,
+          });
+          
+        }
+      
+        // Enviar la solicitud POST
+        fetch('http://10.0.2.2:5000/api/pollos', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+          setSuccessModalVisible(true);
+          clearFields();
+          setTimeout(() => {
+            if (typeof onRegister === 'function') {
+              onRegister(data);
+            }
+          }, 1500);
+        })
+        .catch(error => {
+          RNAlert.alert('Error', 'No se pudo registrar la información de pollos. Intenta nuevamente. Detalles: ' + error.message);
+        });
+      };
+
+      
+    const clearFields = () => {
+        setCantidad('');
+        setDescripcion('');
+        setTipo('');
+        setImagen(null); // Limpiar la imagen seleccionada
+    };
+      
+    
+    
+
+
+    const closeSuccessModal = () => {
+        setSuccessModalVisible(false);
+        if (typeof onReload === 'function') {
+            onReload();  // Llamar a la función para recargar la pantalla
+        }
+        onClose();   // Cerrar el modal original
+    };
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
     return (
         <View style={{ flex: 1 }}>
@@ -160,6 +319,7 @@ const RegistroPollosModal = ({ visible, onClose, onRegister, onReload, setIsBypa
                                 ]}
                                 placeholder="Cantidad (Unidades)"
                                 placeholderTextColor={isDarkMode ? '#AAAAAA' : '#999'}
+<<<<<<< HEAD
                                 keyboardType="numeric" // Asegura que el teclado sea numérico
                                 value={cantidad}
                                 onChangeText={(text) => {
@@ -167,6 +327,11 @@ const RegistroPollosModal = ({ visible, onClose, onRegister, onReload, setIsBypa
                                     const numericValue = text.replace(/[^0-9]/g, '');
                                     setCantidad(numericValue);
                                 }}
+=======
+                                keyboardType="numeric"
+                                value={cantidad}
+                                onChangeText={setCantidad}
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
                             />
                         </View>
     

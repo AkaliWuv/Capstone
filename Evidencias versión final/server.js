@@ -3,20 +3,33 @@ const cors = require('cors');
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
+<<<<<<< HEAD
 const multer = require('multer'); // Import multer only once
 const path = require('path');
 
+=======
+const multer = require('multer');
+const path = require('path');
+
+
+
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 const app = express();
 const PORT = 5000;
 
 // Middleware
 app.use(cors());
+<<<<<<< HEAD
 app.use(express.json());
+=======
+app.use(express.json()); // To receive JSON bodies
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Database connection
 const db = mysql.createConnection({
+<<<<<<< HEAD
   host: '34.23.23.59',
   user: 'melgue',
   password: 'avijuelas1',
@@ -89,6 +102,23 @@ app.post('/api/pollos', upload.single('imagen'), (req, res) => {
 
 
 
+=======
+  host: 'localhost',
+  user: 'root',
+  password: '', // MySQL password
+  database: 'avijuelas' // Your database name
+});
+
+// Connect to MySQL
+db.connect((err) => {
+    if (err) {
+        console.error('Error connecting to MySQL:', err);
+        return;
+    }
+    console.log('Connected to MySQL database');
+});
+
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 // Endpoint to register food
 app.post('/api/comida', (req, res) => {
     try {
@@ -181,7 +211,66 @@ app.put('/api/comida/:id', (req, res) => {
 
 // Configuración para analizar el cuerpo de la solicitud (body)
 
+<<<<<<< HEAD
 
+=======
+// Configuración de almacenamiento con Multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// Endpoint para registrar pollos con imagen
+app.post('/api/pollos', upload.single('imagen'), (req, res) => {
+    console.log(req.file);  // Verifica si la imagen está llegando
+
+  try {
+    
+      const { cantidad, descripcion, tipo } = req.body;
+      const imagenRuta = req.file ? `/uploads/${req.file.filename}` : null;
+
+      // Validar datos
+      if (!cantidad || isNaN(cantidad) || cantidad <= 0) {
+          return res.status(400).json({ error: 'Cantidad inválida o faltan datos requeridos' });
+      }
+
+      const fechaActual = new Date().toISOString().split('T')[0];
+      const horaActual = new Date().toISOString().split('T')[1].split('.')[0];
+
+      const query = 'INSERT INTO pollos (cantidad, fecha, hora, descripcion, tipo, imagen) VALUES (?, ?, ?, ?, ?, ?)';
+      const params = [cantidad, fechaActual, horaActual, descripcion || null, tipo || null, imagenRuta];
+
+      db.query(query, params, (err, results) => {
+          if (err) {
+              console.error('Error al insertar en la base de datos:', err.sqlMessage || err);
+              return res.status(500).json({ error: 'Error al registrar los pollos' });
+          }
+
+          return res.status(201).json({
+              id: results.insertId,
+              cantidad,
+              fecha: fechaActual,
+              hora: horaActual,
+              descripcion,
+              tipo,
+              imagen: imagenRuta
+          });
+      });
+  } catch (error) {
+      console.error('Error inesperado:', error);
+      return res.status(500).json({ error: 'Error inesperado' });
+  }
+});
+
+// Servir archivos estáticos (imágenes) desde el directorio 'uploads'
+app.use('/uploads', express.static('uploads'));
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
 // Endpoint to retrieve all chicken records
 app.get('/api/pollos', (req, res) => {
@@ -375,6 +464,7 @@ app.get('/api/pollos/count', (req, res) => {
 
 
 app.get('/api/cantidad_pollos', (req, res) => {
+<<<<<<< HEAD
   const query = `
     SELECT IFNULL(SUM(cantidad), 0) AS total_pollos 
     FROM pollos
@@ -386,6 +476,14 @@ app.get('/api/cantidad_pollos', (req, res) => {
       return res.status(500).json({ error: 'Error al recuperar los datos' });
     }
     res.json({ total_pollos: results[0].total_pollos });
+=======
+  db.query('SELECT SUM(cantidad) AS total_pollos FROM pollos', (err, results) => {
+    if (err) {
+      console.error('Error al recuperar datos:', err);
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results[0]);
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
   });
 });
 
@@ -741,6 +839,7 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 app.post('/api/check-user', async (req, res) => {
   try {
     const query = 'SELECT COUNT(*) AS count FROM avijuelas';
@@ -803,6 +902,9 @@ app.post('/api/reset-pin', async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+=======
+
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 
   
   // RUTA: Obtener todos los usuarios (solo para pruebas)
@@ -817,6 +919,11 @@ app.post('/api/reset-pin', async (req, res) => {
     });
   });
 
+<<<<<<< HEAD
   app.listen(PORT, '0.0.0.0', () => { 
     console.log(`Server running at http://34.23.23.59:${PORT}`);
+=======
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 });

@@ -11,7 +11,11 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+<<<<<<< HEAD
 import { API_BASE_URL } from '../config';
+=======
+
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; // Importa MaterialCommunityIcons
 import { Picker } from '@react-native-picker/picker';
 import RegistroNivelesModal from './RegistroNivelesModal'; // Ensure this path is correct
@@ -137,7 +141,11 @@ function ComidaScreen({ navigation, route }) {
           text: 'Eliminar',
           onPress: async () => {
             try {
+<<<<<<< HEAD
               const response = await fetch(`${API_BASE_URL}/api/sacos_comida/${itemId}`, {
+=======
+              const response = await fetch(`http://10.0.2.2:5000/api/sacos_comida/${itemId}`, {
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
                 method: 'DELETE',
               });
               if (!response.ok) {
@@ -157,7 +165,11 @@ function ComidaScreen({ navigation, route }) {
   const fetchComidaData = async () => { 
     setLoading(true); // Iniciar el loader
     try {
+<<<<<<< HEAD
       const response = await fetch(`${API_BASE_URL}/api/sacos_comida`);
+=======
+      const response = await fetch('http://10.0.2.2:5000/api/sacos_comida');
+>>>>>>> bfe0fd5160965dc5d8eed485962d6d2f68d30bf4
       if (!response.ok) {
         throw new Error('Error fetching data');
       }
