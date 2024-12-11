@@ -240,7 +240,7 @@ function PollosScreen({ navigation, route, setIsBypassingPin }) {
                             isDarkMode && { color: '#FFFFFF' }, // Texto principal en modo oscuro
                         ]}
                     >
-                        Avijuelas
+                        Avijaulas
                     </Text>
                 </View>
             </View>
