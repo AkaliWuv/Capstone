@@ -358,7 +358,7 @@ function ComidaScreen({ navigation, route }) {
                 isDarkMode && { color: '#FFFFFF' }, // Texto principal en modo oscuro
               ]}
             >
-              Avijaelas
+              Avijaulas
             </Text>
           </View>
         </View>
