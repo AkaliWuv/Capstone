@@ -7,7 +7,7 @@ import { API_BASE_URL } from '../config';
 
 
 
-const EditComidaModal = ({ visible, onClose, onUpdate, itemToEdit }) => {
+const EditComidaModal = ({ visible, onClose, onUpdate, itemToEdit, setIsBypassingPin  }) => {
     const [cantidad, setCantidad] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [tipo, setTipo] = useState('');
@@ -28,29 +28,29 @@ const EditComidaModal = ({ visible, onClose, onUpdate, itemToEdit }) => {
             setTipo(itemToEdit.tipo || '');
             setFecha(itemToEdit.fecha);
             setHora(itemToEdit.hora);
-            setImageUri(itemToEdit.imagen || null); // Asigna la imagen si ya existe
+            setImageUri(itemToEdit.imagen || null);
         }
     }, [itemToEdit]);
 
-    // Función para seleccionar una imagen desde la galería (sin permitir edición)
     const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
-            quality: 1,
-        });
-    
-        console.log(result);
-    
-        if (!result.canceled && result.assets && result.assets.length > 0) {
-            setImageUri(result.assets[0].uri); // Accede correctamente a la URI
-            console.log('Imagen seleccionada:', result.assets[0].uri);
-        } else {
-            console.log('No se seleccionó imagen');
+        try {
+            if (setIsBypassingPin) setIsBypassingPin(true); // Activar bypass del PIN
+
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: false,
+                quality: 1,
+            });
+
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                setImageUri(result.assets[0].uri);
+            }
+        } catch (error) {
+            console.error('Error al seleccionar imagen:', error);
+        } finally {
+            if (setIsBypassingPin) setIsBypassingPin(false); // Desactivar bypass del PIN
         }
     };
-    
-    
 
     const handleEdit = () => {
         if (!cantidad || isNaN(cantidad) || Number(cantidad) <= 0) {
@@ -58,43 +58,41 @@ const EditComidaModal = ({ visible, onClose, onUpdate, itemToEdit }) => {
             setErrorModalVisible(true);
             return;
         }
-    
-        // Crear un nuevo FormData para enviar la imagen y los demás campos
+
         const updatedData = new FormData();
         updatedData.append('cantidad', Number(cantidad));
         updatedData.append('descripcion', descripcion || null);
         updatedData.append('tipo', tipo || null);
         updatedData.append('fecha', fecha);
         updatedData.append('hora', hora);
-    
+
         if (imageUri) {
             updatedData.append('imagen', {
                 uri: imageUri,
-                type: 'image/jpeg', // Ajusta el tipo MIME según corresponda
-                name: `image_${Date.now()}.jpg`, // Nombre único para la imagen
+                type: 'image/jpeg',
+                name: `image_${Date.now()}.jpg`,
             });
         }
-    
+
         fetch(`${API_BASE_URL}/api/pollos/${itemToEdit.id}`, {
             method: 'PUT',
             body: updatedData,
         })
-        .then(response => response.json())
-        .then(data => {
-            setSuccessModalVisible(true);
-            onUpdate(); // Notificar al componente padre para recargar los datos
-            setTimeout(onClose, 1500); // Cerrar el modal después de un breve retraso
-        })
-        .catch(error => {
-            setErrorMessage('No se pudo actualizar el registro. Intenta nuevamente. Detalles: ' + error.message);
-            setErrorModalVisible(true);
-        });
+            .then((response) => response.json())
+            .then((data) => {
+                setSuccessModalVisible(true);
+                onUpdate();
+                setTimeout(onClose, 1500);
+            })
+            .catch((error) => {
+                setErrorMessage('No se pudo actualizar el registro. Intenta nuevamente. Detalles: ' + error.message);
+                setErrorModalVisible(true);
+            });
     };
-    
 
     const closeSuccessModal = () => {
         setSuccessModalVisible(false);
-        onClose(); // Cerrar el modal
+        onClose();
     };
 
     const closeErrorModal = () => {
