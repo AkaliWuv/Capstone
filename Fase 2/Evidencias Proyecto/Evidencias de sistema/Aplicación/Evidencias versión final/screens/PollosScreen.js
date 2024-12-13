@@ -439,6 +439,7 @@ function PollosScreen({ navigation, route, setIsBypassingPin }) {
             itemToEdit={selectedItem}
             setItemToEdit={setSelectedItem}
             isDarkMode={isDarkMode} // Pasar modo oscuro
+            setIsBypassingPin={setIsBypassingPin}
         />
 
         {/* Bottom Navigation */}
