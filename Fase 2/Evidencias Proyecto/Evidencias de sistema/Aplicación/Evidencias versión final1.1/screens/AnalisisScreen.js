@@ -30,7 +30,7 @@ function AnalisisScreen({ navigation, route }) {
   const [gastosMensuales, setGastosMensuales] = useState([]);
   const [sacosComida, setSacosComida] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedYear, setSelectedYear] = useState('2024'); // Año seleccionado
+  const [selectedYear, setSelectedYear] = useState('2024'); 
   const { isDarkMode } = useContext(DarkModeContext); 
   const [isSharing, setIsSharing] = useState(false);
   
