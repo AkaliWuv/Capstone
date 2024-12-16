@@ -26,7 +26,7 @@
     <!-- Clave de API de Google Maps -->
     <meta-data
       android:name="com.google.android.geo.API_KEY"
-      android:value="AIzaSyAMOFyNviFicR9nEtM-dBWYvdbkSakIYuM" />
+      android:value="api_google" />
 
     <activity android:name=".MainActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|uiMode" android:launchMode="singleTask" android:windowSoftInputMode="adjustResize" android:theme="@style/Theme.App.SplashScreen" android:exported="true" android:screenOrientation="portrait">
       <intent-filter>
